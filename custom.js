@@ -88,4 +88,29 @@ const addFocusClass = () => {
     span.classList.add("current");
 }
 
+// Nueva función para buscar Pokémon por nombre
+const searchPokemon = () => {
+    const searchInput = document.getElementById('search').value.toLowerCase();
+    if (searchInput) {
+        fetch(`${pokeUrl}pokemon/${searchInput}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Pokémon no encontrado');
+                return response.json();
+            })
+            .then(data => {
+                clearContainer();
+                clearNavigation();
+                loadCard(data);
+            })
+            .catch(error => {
+                console.error(error);
+                clearContainer();
+                container.innerHTML = `<p>${error.message}</p>`;
+            });
+    } else {
+        // Si el campo de búsqueda está vacío, carga los Pokémon de la página actual
+        getPokemons(`${pokeUrl}pokemon?offset=${currentPage * perPage}&limit=${perPage}`);
+    }
+}
+
 getPokemons(`${pokeUrl}pokemon?offset=0&limit=40`);
